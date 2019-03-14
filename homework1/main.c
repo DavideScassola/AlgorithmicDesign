@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
     //new
     clock_gettime(CLOCK_REALTIME, &b_time);
-    strassen(C2, A, B, i);
+    strassen_improved(C2, A, B, i);
     clock_gettime(CLOCK_REALTIME, &e_time);
 
     printf("\t%lf", get_execution_time(b_time, e_time));
