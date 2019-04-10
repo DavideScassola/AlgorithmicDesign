@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
   printf("n");
   printf("\tnaive");
   printf("\t        strassen");
-  printf("\tstrassen_improved\n");
+  printf("\tstrassen_improved\n");//new
 
   for (size_t i=1; i<=n; i*=2) {
     printf("%ld", i);
@@ -61,10 +61,10 @@ int main(int argc, char *argv[]) {
 
     printf("\t%lf", get_execution_time(b_time, e_time));
 
-    //new
-    clock_gettime(CLOCK_REALTIME, &b_time);
-    strassen_improved(C2, A, B, i);
-    clock_gettime(CLOCK_REALTIME, &e_time);
+
+    clock_gettime(CLOCK_REALTIME, &b_time);//new
+    strassen_improved(C2, A, B, i);//new
+    clock_gettime(CLOCK_REALTIME, &e_time);//new
 
     printf("\t%lf", get_execution_time(b_time, e_time));
 
