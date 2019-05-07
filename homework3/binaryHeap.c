@@ -12,7 +12,7 @@ typedef struct BinaryHeap
 BinaryHeap newBinaryHeap(size_t size)
 {
     BinaryHeap bh;
-    short unsigned int multiplier = 2; //how many more space it allocates
+    short unsigned int multiplier = 1; //how many more space it allocates
     bh.H = (int *) malloc(sizeof(int) * size * multiplier);
     bh.size = size;
     return bh;
