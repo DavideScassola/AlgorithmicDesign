@@ -34,19 +34,20 @@ int main()
     printf("initialization  . . .");
 
     int* adj_matrix = (int*) malloc(sizeof(int)*size*size);
-    
+    Graph g;
+    g.weights_m = adj_matrix;
+    g.v = (Node*) malloc(sizeof(Node)*size);
+  
+
+    ////////// Dijkstra shortest path search in a dense graph//////////
+
+    /// building dense adjacency matrix
     for(int i=0; i<size; i++)
         for(int j=0; j<size; j++)
             adj_matrix[i*size + j] = (abs(j-i-1)*2+1 + 80*((i+j)%3==0))/(1+5*((i+j)%(9)==0));
- 
-    Graph g;
-    g.size=size;
-    g.weights_m = adj_matrix;
-    g.v = (Node*) malloc(sizeof(Node)*size);
 
 
-    ////////// Dijkstra shortest path search //////////
-    printf("\nDijkstra shortest path search . . .\n");
+    printf("\n\nDijkstra shortest path search in a dense graph:\n");
    
     printf("\t\t\theap");
     printf("\t\tarray\n");
@@ -63,13 +64,37 @@ int main()
     }
 
 
+
+    ////////// Dijkstra shortest path search in a sparse graph //////////
+
+    printf("\n\nDijkstra shortest path search in a sparse graph:\n");
+   
+    printf("\t\t\theap");
+    printf("\t\tarray\n");
+
+    for(int i=0;i<n_of_test;i++)
+    {    
+	g.size = size/(1<<(n_of_test-i-1));
+
+        /// building sparse adjacency matrix
+        for(int i=0; i<g.size*g.size; i++)
+            adj_matrix[i] = INF;
+
+        for(int i=0; i<g.size-1; i++)
+	    adj_matrix[i*g.size + i + 1] = 2;
+	adj_matrix[(g.size-1)*g.size] = 2;
+            
+	printf("n of nodes:%d ", g.size);
+
+ 	print_performance(Dijkstra_heap, &g);
+	print_performance(Dijkstra_array, &g);
+
+	printf("\n");
+    }
+
+
     free(adj_matrix);
     free(g.v);
 
     return 0;
 }
-
-
-
-
-
