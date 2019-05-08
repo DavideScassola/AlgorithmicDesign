@@ -65,7 +65,7 @@ void relax(Heap* q, Node* u, Node* v, int w)
 {
     if(u->d + w < v->d)
     {
-        update_distance(q, v->id, u->d + w);
+        update_distance(q, v, u->d + w);
         v->pred = u;
     }
 }
@@ -74,7 +74,7 @@ void relax_array(Array* q, Node* u, Node* v, int w)
 {
     if(u->d + w < v->d)
     {
-        array_update_distance(q, v->id, u->d + w);
+        v->d = u->d + w;
         v->pred = u;
     }
 }

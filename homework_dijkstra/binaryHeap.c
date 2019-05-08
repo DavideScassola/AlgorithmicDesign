@@ -6,6 +6,7 @@ typedef struct Node
 {
     int d;
     int id;
+    int position;
     struct Node* pred;
 } Node;
 
@@ -68,6 +69,10 @@ Node* heap_minimum(Heap h)
 
 void swap(Node** a, Node** b)
 {
+    int t = (**a).position;
+    (**a).position = (**b).position;
+    (**b).position = t;
+
     Node* temp = *a;
     *a = *b;
     *b = temp;
@@ -105,8 +110,12 @@ Node* extract_minimum(Heap* h)
 Heap build_heap(Node* A, size_t n, int (*compare_function)(int,int))
 {
     Node** node_pointers = (Node**) malloc(sizeof(Node*)*n);
+
     for(int i=0; i<n; i++)
+    {
+        A[i].position = i;
         node_pointers[i]=&(A[i]);
+    }
 
     Heap h;
     h.size=n;
@@ -142,9 +151,9 @@ int findNode(Heap* h, int node_id)
     return -1;
 }
 
-void update_distance(Heap* h, int node_id, int w)
+void update_distance(Heap* h, Node* v, int w)
 {
-    int pos = findNode(h, node_id);
+    int pos = v->position;//findNode(h, v->id);
     heap_decrease_key(h, pos, w);
 }
 

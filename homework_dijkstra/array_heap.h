@@ -7,6 +7,7 @@ typedef struct Node
 {
     int d;
     int id;
+    int position;
     struct Node* pred;
 } Node;
 
@@ -18,7 +19,7 @@ typedef struct Array
 
 int array_empty(Array* a);
 Array build_Array(Node* nodes, size_t n);
-void array_update_distance(Array* a, int node_id, int w);
+
 Node* extract_array_minimum(Array* a);
 void freeArray(Array bh);
 
@@ -36,7 +37,7 @@ Heap build_heap(Node* A, size_t n, int (*compare_function)(int,int));
 int less(int a, int b);
 void pns(Node** nodes, int n);
 void pn(Node* n);
-void update_distance(Heap* h, int node_id, int w);
+void update_distance(Heap* h, Node* v, int w);
 Node* extract_minimum(Heap* h);
 void freeHeap(Heap bh);
 

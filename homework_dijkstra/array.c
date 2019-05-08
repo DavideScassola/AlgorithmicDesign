@@ -6,6 +6,7 @@ typedef struct Node
 {
     int d;
     int id;
+    int position;
     struct Node* pred;
 } Node;
 
@@ -76,12 +77,6 @@ int array_findNode(Array* a, int node_id)
     for(int i=0; i<a->size; i++)
         if(node_id == a->A[i]->id) return i;
     return -1;
-}
-
-void array_update_distance(Array* a, int node_id, int w)
-{
-    int pos = array_findNode(a, node_id);
-    a->A[pos]->d = w;
 }
 
 void show_Array(Array a)
