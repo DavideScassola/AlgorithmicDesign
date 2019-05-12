@@ -21,7 +21,6 @@ void matrix_chain_aux(int *P, int **M, int **S, int i, int j)
 
 void matrix_chain(int **S, int **M, int *P, int n)
 {
-
 	for(int i=0; i<n; i++)
 	{
 		M[i][i]=0;
@@ -65,17 +64,16 @@ void multiply_chain_aux(float **O, float ***M, int **S, int *P, size_t left, siz
 {
 	if(left==right-1)
 	{
-		//printf("caso base (left=%ld)\n",left);
+		// base case
 		matrix_copy(O,M[left], P[left], P[left+1]);
 		return;
 	}
 
-	size_t parenthesis = S[left][right-2];//controlla indice (forse devi fare +1 a right)
-	//printf("left=%ld, right=%ld, parenthesis =%ld\n",left,right,parenthesis);
+	size_t parenthesis = S[left][right-2];
 
 	size_t A_rows = P[left];
 	size_t A_cols = P[parenthesis];
-	size_t B_rows = P[parenthesis];
+	size_t B_rows = P[parenthesis]; // (not necessary)
 	size_t B_cols = P[right];
 	float **A = allocate_matrix(A_rows, A_cols);
 	float **B = allocate_matrix(B_rows, B_cols);
@@ -84,18 +82,16 @@ void multiply_chain_aux(float **O, float ***M, int **S, int *P, size_t left, siz
         multiply_chain_aux(B,M,S,P, parenthesis, right);	
 
 	naive_matrix_mult(O, A, B, A_rows, A_cols, B_rows, B_cols);
-	//printf("sto moltiplicando, left=%ld, right=%ld, par=%ld\n",left,right,parenthesis);
 
 	deallocate_matrix(A, A_rows);
 	deallocate_matrix(B, B_rows);
-	//printf("qui ci sono arrivato\n");
 }
 
 void multiply_chain(float **O, float ***M, int *P, size_t n)
 {
 	unsigned int dim = n-1;
 	int **S = allocate_int_matrix(dim-1, dim-1);
-	int **cost=allocate_int_matrix(dim,dim);
+	int **cost = allocate_int_matrix(dim,dim);
 
 	matrix_chain(S, cost, P, dim);
 	multiply_chain_aux(O,M,S,P,0,dim);
@@ -104,17 +100,20 @@ void multiply_chain(float **O, float ***M, int *P, size_t n)
   	deallocate_int_matrix(S,dim-1);
 }
 
+/*
+for "naive" I mean that I put the parenthesis always dividing the chain in 2 equals halves.
+	EX:	a b c d e f g h i -> ((a b) ((c d) e)) ((f g) (h i))
+*/
 void multiply_chain_naive_aux(float **O, float ***M, int *P, size_t left, size_t right)
 {
 	if(left==right-1)
 	{
-		//printf("caso base (left=%ld)\n",left);
+		// caso base
 		matrix_copy(O,M[left], P[left], P[left+1]);
 		return;
 	}
 
 	size_t parenthesis = (left+right)/2;
-	//printf("left=%ld, right=%ld, parenthesis =%ld\n",left,right,parenthesis);
 
 	size_t A_rows = P[left];
 	size_t A_cols = P[parenthesis];
@@ -127,13 +126,16 @@ void multiply_chain_naive_aux(float **O, float ***M, int *P, size_t left, size_t
         multiply_chain_naive_aux(B,M,P, parenthesis, right);	
 
 	naive_matrix_mult(O, A, B, A_rows, A_cols, B_rows, B_cols);
-	//printf("sto moltiplicando, left=%ld, right=%ld, par=%ld\n",left,right,parenthesis);
 
 	deallocate_matrix(A, A_rows);
 	deallocate_matrix(B, B_rows);
-	//printf("qui ci sono arrivato\n");
 }
 
+
+/*
+for "naive" I mean that I put the parenthesis always dividing the chain in 2 equals halves.
+	EX:	a b c d e f g h i -> ((a b) ((c d) e)) ((f g) (h i))
+*/
 void multiply_chain_naive(float **O, float ***M, int *P, size_t n)
 {
 	unsigned int dim = n-1;

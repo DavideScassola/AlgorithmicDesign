@@ -9,19 +9,6 @@ typedef struct BinaryHeap
     int (*compare)(int,int);
 } BinaryHeap;
 
-BinaryHeap newBinaryHeap(size_t size)
-{
-    BinaryHeap bh;
-    short unsigned int multiplier = 2; //how many more space it allocates
-    bh.H = (int *) malloc(sizeof(int) * size * multiplier);
-    bh.size = size;
-    return bh;
-}
-
-void freeBinaryHeap(BinaryHeap bh)
-{
-    free(bh.H);
-}
 
 int left_child(int i)
 {
@@ -53,15 +40,24 @@ int last(BinaryHeap h)
     return h.size-1;
 }
 
+
 int is_valid_node(BinaryHeap h, int i)
 {
     return h.size>i;
 }
 
+
 int heap_minimum(BinaryHeap h)
 {
     return(h.H[root()]);
 }
+
+
+void freeBinaryHeap(BinaryHeap bh)
+{
+    free(bh.H);
+}
+
 
 void swap(int *a, int *b)
 {
@@ -70,25 +66,31 @@ void swap(int *a, int *b)
     *b = temp;
 }
 
+
 void heapify(BinaryHeap h, int i)
 {
     int m = i;
-    int j;
+    int lc, rc;
+    int old = m;
+    int finished = 0;
 
-    j = left_child(i);
-    if(is_valid_node(h, j) && h.compare(h.H[j],h.H[m]))
-        m=j;
-
-    j = right_child(i);
-    if(is_valid_node(h, j) && h.compare(h.H[j],h.H[m]))
-        m=j;
-
-    if(i!=m)
+    while(!finished)
     {
-        swap(&(h.H[i]), &(h.H[m]));
-        heapify(h,m);
+        rc = right_child(m);
+        lc = left_child(m);
+	m = (is_valid_node(h, rc) && h.compare(h.H[rc],h.H[m])) ? rc : m;
+        m = (is_valid_node(h, lc) && h.compare(h.H[lc],h.H[m])) ? lc : m;
+
+        if(old!=m)
+        {
+            swap(&(h.H[m]), &(h.H[old]));
+            old = m;
+        }
+        else 
+            finished = 1;
     }
 }
+
 
 void remove_minimum(BinaryHeap *h)
 {
@@ -97,22 +99,24 @@ void remove_minimum(BinaryHeap *h)
     heapify(*h,root());
 }
 
+
 BinaryHeap build_binary_heap(int* A, size_t n, int (*compare_function)(int,int))
 {
     BinaryHeap h;
     h.size=n;
     h.H=A;
     h.compare=compare_function;
+
     for(int i=parent(last(h));i>=0;i--)
-    {
         heapify(h, i);
-    }
+
     return h;
 }
 
+
 void heap_decrease_key(BinaryHeap h, int i, int value)
 {
-    if(h.H[i]<=value)
+    if(h.compare(h.H[i],value))
         printf("%d is not smaller than the selected element", value);
 
     h.H[i]=value;
@@ -125,12 +129,14 @@ void heap_decrease_key(BinaryHeap h, int i, int value)
         
 }
 
+
 void heap_insert(BinaryHeap* h, int value)
 {
     (h->size)++;
     h->H[last(*h)] = INT_MAX;
     heap_decrease_key(*h, last(*h), value);
 }
+
 
 void show_heap(BinaryHeap h)
 {

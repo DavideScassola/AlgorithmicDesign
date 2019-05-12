@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include<time.h>
+#include <time.h>
 #include "Dijkstra.h"
 
 double get_execution_time(const struct timespec b_time, const struct timespec e_time)
@@ -45,7 +45,7 @@ int main()
     for(int i=0; i<size; i++)
         for(int j=0; j<size; j++)
             adj_matrix[i*size + j] = (abs(j-i-1)*2+1 + 80*((i+j)%3==0))/(1+5*((i+j)%(9)==0));
-
+	    // just a way to generate a graph having a non-trivial soulution to the shortest path search
 
     printf("\n\nDijkstra shortest path search in a dense graph:\n");
    
@@ -81,8 +81,8 @@ int main()
             adj_matrix[i] = INF;
 
         for(int i=0; i<g.size-1; i++)
-	    adj_matrix[i*g.size + i + 1] = 2;
-	adj_matrix[(g.size-1)*g.size] = 2;
+	    adj_matrix[i*g.size + i + 1] = 33;
+	adj_matrix[(g.size-1)*g.size] = 33;
             
 	printf("n of nodes:%d ", g.size);
 

@@ -37,8 +37,10 @@ int main()
         clock_gettime(CLOCK_REALTIME, &b_time);
         BinaryHeap h = build_binary_heap(M1[i], size, less_or_equal);
         clock_gettime(CLOCK_REALTIME, &e_time);
-        printf("\t%lf\n", get_execution_time(b_time, e_time));
+        printf("test %d \t%lf\n", i+1, get_execution_time(b_time, e_time));
     }
+
+    
     
    deallocate_int_matrix(M1, n_of_test);
 }

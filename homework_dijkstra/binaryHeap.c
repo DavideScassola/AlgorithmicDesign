@@ -4,10 +4,10 @@
 
 typedef struct Node
 {
-    int d;
+    int d; // distance from source (dijkstra)
     int id;
-    int position;
-    struct Node* pred;
+    int position; // when I have a node I need to know its position in the heap
+    struct Node* pred; // predecessor node i the shortest path (dijkstra)
 } Node;
 
 typedef struct Heap
@@ -144,24 +144,10 @@ void heap_decrease_key(Heap* h, int i, int value)
         
 }
 
-int findNode(Heap* h, int node_id)
-{
-    for(int i=0; i<h->size; i++)
-        if(node_id == h->H[i]->id) return i;
-    return -1;
-}
-
 void update_distance(Heap* h, Node* v, int w)
 {
-    int pos = v->position;//findNode(h, v->id);
+    int pos = v->position;
     heap_decrease_key(h, pos, w);
-}
-
-void heap_insert(Heap* h, int value)
-{
-    (h->size)++;
-    h->H[last(*h)]->d = INT_MAX;
-    heap_decrease_key(h, last(*h), value);
 }
 
 void show_heap(Heap h)
@@ -188,43 +174,3 @@ int less(int a, int b)
 {
     return a<b;
 }
-
-/*
-int main()
-{
-    size_t n = 10;
-    Node** A = (Node**) malloc(sizeof(Node*) * n * 2);
-    for(int i=0;i<n;i++)
-       {
-           Node* a = (Node*) malloc(sizeof(Node));
-           a->d=n-i;
-           a->id=n-i-1;
-           A[i]=a;
-           //printf("%d, ",A[i]);
-       }
-
-    printf("\n");
-    
-    //for(int i=0;i<n;i++)
-       // A[i]=n-i;
-
-    Heap h = build_heap(A,n, less);
-
-    show_heap(h);
-    //heap_insert(&h, -1);
-    //show_heap(h);
-    printf("\n");
-    printf("\n");
-    printf("\n");
-    extract_minimum(&h);
-    extract_minimum(&h);
-    extract_minimum(&h);
-    update_distance(&h, 7, 4);
-    extract_minimum(&h);
-    extract_minimum(&h);
-    extract_minimum(&h);
-    extract_minimum(&h);
-    show_heap(h);
-    freeHeap(h);
-}
-*/
