@@ -87,6 +87,8 @@ void free_lists_array(List* l, size_t n)
     free(l);
 }
 
+
+// for debugging purposes
 /*
 int main()
 {

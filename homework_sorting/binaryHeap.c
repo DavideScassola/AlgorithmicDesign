@@ -73,20 +73,24 @@ void swap(int *a, int *b)
 void heapify(BinaryHeap h, int i)
 {
     int m = i;
-    int j;
+    int lc, rc;
+    int old = m;
+    int finished = 0;
 
-    j = left_child(i);
-    if(is_valid_node(h, j) && h.compare(h.H[j],h.H[m]))
-        m=j;
-
-    j = right_child(i);
-    if(is_valid_node(h, j) && h.compare(h.H[j],h.H[m]))
-        m=j;
-
-    if(i!=m)
+    while(!finished)
     {
-        swap(&(h.H[i]), &(h.H[m]));
-        heapify(h,m);
+        rc = right_child(m);
+        lc = left_child(m);
+	m = (is_valid_node(h, rc) && h.compare(h.H[rc],h.H[m])) ? rc : m;
+        m = (is_valid_node(h, lc) && h.compare(h.H[lc],h.H[m])) ? lc : m;
+
+        if(old!=m)
+        {
+            swap(&(h.H[m]), &(h.H[old]));
+            old = m;
+        }
+        else 
+            finished = 1;
     }
 }
 

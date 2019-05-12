@@ -4,6 +4,15 @@
 #include"binaryHeap.h"
 #include"floatLinkedList.h"
 
+int max(int a, int b)
+{
+	return a>b ? a : b;
+}
+
+int min(int a, int b)
+{
+	return a>b ? b : a;
+}
 
 void copy(int* A,int* B, size_t n)
 {
@@ -27,6 +36,30 @@ void f(float* v, size_t n)
 
 void swap(int *a, int *b);
 
+void swap_float(float* a, float *b)
+{
+	float t = *a;
+	*a = *b;
+	*b = t;
+}
+
+int power(int basis, int exponent)
+{
+	int m = 1;
+	for(int i=0; i<exponent; i++)
+		m*=basis;
+	return m;
+}
+
+int logarithm(int basis, int n)
+{
+	int m = 1;
+	int exp = 0;
+	for(exp=0;m<=n; exp++)
+		m*=basis;
+	return exp;
+}
+
 int partition(int *A, int left, int right, int pivot)
 {
     int pivot_value = A[pivot];
@@ -34,8 +67,6 @@ int partition(int *A, int left, int right, int pivot)
     
     int j = right-1;
     int i = left+1;
-
-    
 
     while(i<=j)
     {
@@ -120,12 +151,10 @@ void heap_sort(int* v, size_t n)
     }
 }
 
-
 void counting_sort(int* A, size_t k, size_t n)
 {
 	int* C = (int*)calloc(k, sizeof(int));
 	int* B = (int*)malloc(sizeof(int) * n);
-	//int* A = *v;
 
 	for(int i=0; i<n; i++)
 		C[A[i]]++;
@@ -141,19 +170,10 @@ void counting_sort(int* A, size_t k, size_t n)
 
 	free(C);
 	copy(A,B,n);
-	free(B);
-	//free(*v);
-	//*v = B;	
-		
+	free(B);	
 }
 
-void swap_float(float* a, float *b)
-{
-	float t = *a;
-	*a = *b;
-	*b = t;
-}
-
+// it's an insertion sort
 void sort(float* v, int start, int end)
 {
     int j;
@@ -169,6 +189,7 @@ void sort(float* v, int start, int end)
     }
 }
 
+// it's an insertion sort
 void sort_int(int* v, int start, int end)
 {
     int j;
@@ -184,17 +205,13 @@ void sort_int(int* v, int start, int end)
     }
 }
 
-
-
 void bucket_sort(float* A, size_t n)
 {
 	List* B = allocate_lists_array(n);
 
 	for(int i=0;i<n;i++)
 	{
-		//printf("\nposto = %d", (int)(A[i]*n));
 		push(&B[(int)(A[i]*n)], A[i]);
-		//push(&B[(int)(A[i]/n)+1], A[i]);
 	}
 
 	for(int i=0;i<n;i++)
@@ -214,41 +231,24 @@ void bucket_sort(float* A, size_t n)
 	free_lists_array(B, n);
 }
 
-int power(int basis, int exponent)
-{
-	int m = 1;
-	for(int i=0; i<exponent; i++)
-		m*=basis;
-	return m;
-}
-
-int logarithm(int basis, int n)
-{
-	int m = 1;
-	int exp = 0;
-	for(exp=0;m<=n; exp++)
-		m*=basis;
-	return exp;
-}
-
+// it returns the digit of the number n in the selected position (with respect to the selected basis)
 unsigned int digit(unsigned int n, unsigned int position, const unsigned int basis)
 {
 	int m = power(basis, position);
 	return ((n%(m*basis)) - (n%m))/(m);
 }
 
-
+//for radix sort
 void counting_sort_aux(int* A, int digit_pos, int basis, size_t n)
 {
 	int* C = (int*)calloc(basis, sizeof(int));
 	int* B = (int*)malloc(sizeof(int) * n);
-	//int* A = *v;
+
 	int* Adigits = (unsigned int*)malloc(sizeof(unsigned int) * n);
 
 	for(int i=0; i<n; i++)
 	{
 		Adigits[i] = digit(A[i], digit_pos, basis);
-		//printf("n=%d, digit[%d]=%d\n",A[i], digit_pos, Adigits[i]);
 	}
 		
 
@@ -265,11 +265,9 @@ void counting_sort_aux(int* A, int digit_pos, int basis, size_t n)
 	}
 
 	free(C);
-	//free(*v);
 	free(Adigits);
 	copy(A,B,n);
 	free(B);
-	//*v = B;	
 }
 
 
@@ -283,14 +281,38 @@ void radix_sort(int* v, unsigned int max, int basis, size_t n)
 }
 
 
-int max(int a, int b)
+/*
+This new partition algorithm deals with repeated values in the array: 
+the problem is that values that are equal to the pivot are put all in the same side,
+creating in this way an unbalancing.
+I resolved this issue distributing in an equal way the equal values (half are treated like smaller values, half are treated like bigger values).
+*/
+int smart_partition(int *A, int left, int right, int pivot)
 {
-	return a>b ? a : b;
-}
+    int pivot_value = A[pivot];
+    swap(&A[pivot], &A[left]);
+    short skip = 1; // left or right
+    
+    int j = right-1;
+    int i = left+1;
 
-int min(int a, int b)
-{
-	return a>b ? b : a;
+    while(i<=j)
+    {
+        if(A[i]==pivot_value)
+            skip = !skip;   // I change it at each time
+
+        if(A[i]>pivot_value || (A[i]==pivot_value && !skip))
+        {
+            swap(&A[i],&A[j]);
+            j--;
+        }
+        else
+        {
+            i++;
+        } 
+    }
+    swap(&A[left],&A[j]);
+    return j;
 }
 
 int select_pivot(int* A, size_t l, size_t r)
@@ -320,7 +342,7 @@ int select_aux(int* A, size_t i, size_t l, size_t r)
 		return A[l];
 
 	int p = select_pivot(A, l, r);
-	int k = partition(A, l, r, p);
+	int k = smart_partition(A, l, r, p);
 
 	if(i==k)
 		return A[k];
@@ -338,6 +360,14 @@ int selection(int* A, int i, size_t n)
 }
 
 
+
+
+
+
+
+
+
+// this code was just for debugging purposes
 /*
 int main()
 {	
@@ -353,16 +383,16 @@ int main()
 	printf("\n");
 
 	free(A);
-	*/  /*
+	*/  
 
-	
-	size_t n = 100;
+	/*
+	size_t n = 10000;
 	int* A = (int*)malloc(sizeof(int)*n);
 	for(int i=0;i<n;i++)
-		A[i]=(n-1-i)%12;
+		A[i]=(n-1-i)%2;
 	
 	//f(A,n);
-	s(A,n);
+	//s(A,n);
 	printf("\n");
 	//counting_sort_aux(int** v, size_t n, int digit_pos, int basis, int n_of_digits)
 	//counting_sort_aux(&A, 20, 1, 10, 2);
@@ -377,9 +407,15 @@ int main()
 	
 	//printf("\nthe pivot is:%d\n", select_pivot(A, 0, n));
 	//counting_sort(&A, n*100, n);
-	counting_sort(A,10000,n);
-	s(A,n);
+	//counting_sort(A,10000,n);
+
+	for(int p=0; p<n; p++)
+        selection(A, p, n);
+        //if(p%1000 == 0)
+		    //printf("\n A[%d]=%d ", p, selection(A, p, n));
+	//heap_sort(A,n);
+	//s(A,n);
 	free(A);
 
-}*/
-
+}
+*/
